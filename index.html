@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>졸업앨범 촬영용 슬레이트 (다중 입력)</title>
+    <style>
+        /* 기본 스타일 리셋 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* 입력 화면 스타일 */
+        #input-screen {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 340px;
+            width: 85%;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin-top: 0;
+            color: #111827;
+            margin-bottom: 24px;
+            font-size: 20px;
+        }
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #4b5563;
+            font-size: 14px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border 0.2s;
+        }
+        .input-group input:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:active {
+            background-color: #1d4ed8;
+        }
+
+        /* 촬영용 표시 화면 (흰 바탕 + 검은 글씨) */
+        #display-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            color: #000000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 기본 글자 크기 (세로 모드 기준) */
+        #infoText {
+            font-size: 15vw; 
+            line-height: 1.3;
+            word-break: break-all; /* 번호가 길어지면 자연스럽게 줄바꿈 */
+            width: 100%;
+        }
+
+        /* 가로 모드일 때 글자 크기 최적화 */
+        @media (min-aspect-ratio: 1/1) {
+            #infoText {
+                font-size: 13vh;
+            }
+        }
+
+        /* 번호가 많을 때를 대비한 폰트 스케일 다운 클래스 */
+        #infoText.long-text {
+            font-size: 10vw;
+        }
+        @media (min-aspect-ratio: 1/1) {
+            #infoText.long-text {
+                font-size: 9vh;
+            }
+        }
+
+        /* 안내 문구 */
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            font-size: 11px;
+            color: #e0e0e0;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="input-screen">
+        <h2>📸 슬레이트 정보 입력</h2>
+        <div class="input-group">
+            <label for="classNum">반</label>
+            <input type="number" id="classNum" pattern="[0-9]*" inputmode="numeric" placeholder="예: 3">
+        </div>
+        <div class="input-group">
+            <label for="groupNum">조 (없으면 비워두기)</label>
+            <input type="number" id="groupNum" pattern="[0-9]*" inputmode="numeric" placeholder="예: 2">
+        </div>
+        <div class="input-group">
+            <label for="studentNum">번호 (여러 명 입력 가능)</label>
+            <input type="text" id="studentNum" placeholder="예: 1, 2, 3 또는 5~8">
+        </div>
+        <button onclick="showSlate()">화면 크게 보기</button>
+    </div>
+
+    <div id="display-screen" onclick="showInput()">
+        <div id="infoText"></div>
+        <div class="hint">터치하면 수정 화면으로 돌아갑니다.</div>
+    </div>
+
+    <script>
+        function showSlate() {
+            const classNum = document.getElementById('classNum').value.trim();
+            const groupNum = document.getElementById('groupNum').value.trim();
+            let studentNum = document.getElementById('studentNum').value.trim();
+
+            // 필수값 체크
+            if (!classNum || !studentNum) {
+                alert('반과 번호는 꼭 입력해 주세요!');
+                return;
+            }
+
+            // 쉼표 뒤에 띄어쓰기가 없다면 보기 좋게 공백 추가 (예: 1,2,3 -> 1, 2, 3)
+            studentNum = studentNum.replace(/,/g, ', ');
+
+            // 출력 텍스트 조합
+            let htmlContent = `<div>${classNum}반</div>`;
+            if (groupNum !== "") {
+                htmlContent += `<div>${groupNum}조</div>`;
+            }
+            htmlContent += `<div>${studentNum}번</div>`;
+
+            const infoTextField = document.getElementById('infoText');
+            infoTextField.innerHTML = htmlContent;
+
+            // 번호 입력 글자 수가 길 경우 자동으로 글자 크기를 줄여주는 센스
+            if (studentNum.length > 8) {
+                infoTextField.classList.add('long-text');
+            } else {
+                infoTextField.classList.remove('long-text');
+            }
+
+            // 화면 전환
+            document.getElementById('input-screen').style.display = 'none';
+            document.getElementById('display-screen').style.display = 'flex';
+
+            // 전체화면 요청
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen().catch(() => {});
+            }
+        }
+
+        function showInput() {
+            document.getElementById('input-screen').style.display = 'block';
+            document.getElementById('display-screen').style.display = 'none';
+            
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen().catch(() => {});
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
