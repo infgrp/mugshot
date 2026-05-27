@@ -98,28 +98,41 @@
             box-sizing: border-box;
         }
 
-        /* 기본 글자 크기 (세로 모드 기준) */
+        /* 기본 글자 크기 (세로 모드 기준) — 반/조: 원본 1.5배 */
         #infoText {
-            font-size: 37vw;
-            line-height: 1.6;
-            word-break: break-all; /* 번호가 길어지면 자연스럽게 줄바꿈 */
+            font-size: 23vw;
+            line-height: 1.4;
+            word-break: break-all;
             width: 100%;
+        }
+        /* 번호: 원본 1.25배 */
+        #infoText div:last-child {
+            font-size: 19vw;
         }
 
         /* 가로 모드일 때 글자 크기 최적화 */
         @media (min-aspect-ratio: 1/1) {
             #infoText {
-                font-size: 32vh;
+                font-size: 20vh;
+            }
+            #infoText div:last-child {
+                font-size: 16vh;
             }
         }
 
         /* 번호가 많을 때를 대비한 폰트 스케일 다운 클래스 */
         #infoText.long-text {
-            font-size: 25vw;
+            font-size: 15vw;
+        }
+        #infoText.long-text div:last-child {
+            font-size: 13vw;
         }
         @media (min-aspect-ratio: 1/1) {
             #infoText.long-text {
-                font-size: 22vh;
+                font-size: 14vh;
+            }
+            #infoText.long-text div:last-child {
+                font-size: 11vh;
             }
         }
 
